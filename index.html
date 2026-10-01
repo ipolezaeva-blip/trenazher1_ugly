@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренажёр по геометрии · Углы треугольника · 7 класс</title>
+<style>
+:root{
+  --pink-50:#fff7fb;
+  --pink-100:#ffe6f1;
+  --pink-200:#ffcfe2;
+  --pink-300:#ffb0d0;
+  --pink-500:#ec5f92;
+  --pink-600:#e03a76;
+  --pink-700:#c22a63;
+  --text:#4a1f33;
+  --muted:#9c6684;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:'Segoe UI', 'Trebuchet MS', Tahoma, sans-serif;
+  background:radial-gradient(circle at 12% 8%, #fff3f9 0%, #ffe3ef 42%, #ffd2e6 100%);
+  color:var(--text);
+  overflow:hidden;
+}
+.screen{display:none;height:100vh;height:100dvh;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ---------- Кнопки ---------- */
+.btn{
+  border:none;border-radius:14px;padding:12px 22px;font-size:16px;font-weight:700;
+  cursor:pointer;font-family:inherit;transition:.18s ease;white-space:nowrap;
+}
+.btn-primary{background:linear-gradient(135deg,#f0629b,#e03a76);color:#fff;box-shadow:0 8px 18px rgba(224,58,118,.32);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(224,58,118,.42);}
+.btn-primary:active{transform:translateY(0);}
+.btn-outline{background:#fff;color:var(--pink-600);border:2px solid var(--pink-200);}
+.btn-outline:hover{background:var(--pink-50);border-color:var(--pink-300);}
+.btn-ghost{background:transparent;color:#b8497a;border:2px solid transparent;}
+.btn-ghost:hover{background:var(--pink-100);}
+.btn-ghost:disabled{opacity:.35;cursor:not-allowed;}
+.btn-ghost:disabled:hover{background:transparent;}
+.btn-lg{padding:16px 44px;font-size:19px;border-radius:18px;}
+
+/* ---------- Стартовый экран ---------- */
+#startScreen{align-items:center;justify-content:center;padding:20px;}
+.start-card{
+  background:#fff;border-radius:30px;padding:44px 52px;max-width:620px;width:100%;
+  text-align:center;box-shadow:0 26px 60px rgba(224,58,118,.22);
+  border:2px solid #ffe0ee;animation:pop .5s ease;
+}
+@keyframes pop{from{opacity:0;transform:translateY(24px) scale(.97);}to{opacity:1;transform:none;}}
+.logo{
+  font-size:52px;line-height:1;color:var(--pink-600);margin-bottom:6px;
+  text-shadow:0 6px 16px rgba(224,58,118,.3);
+}
+.start-card h1{margin:0 0 6px;font-size:29px;color:var(--pink-700);}
+.subtitle{margin:0 0 26px;color:var(--muted);font-size:17px;font-weight:600;}
+.rules{
+  list-style:none;padding:0;margin:0 0 32px;text-align:left;
+  display:flex;flex-direction:column;gap:12px;
+}
+.rules li{
+  background:var(--pink-50);border-radius:14px;padding:13px 18px;font-size:15.5px;
+  border-left:5px solid var(--pink-300);color:#6a3350;
+}
+.rules li b{color:var(--pink-700);}
+
+/* ---------- Топбар ---------- */
+.topbar{
+  display:flex;align-items:center;gap:20px;padding:14px 26px;
+  background:rgba(255,255,255,.75);backdrop-filter:blur(8px);
+  border-bottom:2px solid #ffe0ee;flex-shrink:0;
+}
+.brand{font-weight:800;color:var(--pink-700);font-size:17px;letter-spacing:.2px;}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:6px;max-width:520px;margin:0 auto;}
+.progress-text{font-size:13.5px;font-weight:700;color:var(--muted);text-align:center;}
+.progress-text span{color:var(--pink-700);}
+.progress-track{height:9px;background:#ffe2ef;border-radius:99px;overflow:hidden;}
+.progress-fill{
+  height:100%;width:0;border-radius:99px;transition:width .35s ease;
+  background:linear-gradient(90deg,#ff9dc4,#e03a76);
+}
+
+/* ---------- Рабочая область ---------- */
+.task-area{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:16px 26px;overflow-y:auto;
+}
+.task-card{
+  width:100%;max-width:1080px;background:#fff;border-radius:26px;
+  box-shadow:0 18px 44px rgba(224,58,118,.14);
+  border:2px solid #ffe6f1;
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:22px 26px;
+  animation:fade .3s ease;
+}
+@keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.figure-wrap{
+  background:linear-gradient(160deg,#fffafd,#fff0f7);
+  border-radius:20px;border:2px dashed #ffc9de;
+  display:flex;align-items:center;justify-content:center;padding:10px;min-height:240px;
+}
+.figure{width:100%;max-width:440px;height:auto;display:block;}
+.task-body{display:flex;flex-direction:column;justify-content:center;padding:6px 6px 6px 18px;}
+.task-title{
+  font-size:13px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--pink-500);margin-bottom:10px;
+}
+.task-text{font-size:19px;line-height:1.5;margin:0 0 20px;font-weight:600;color:#5a2740;}
+.answer-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.answer-row label{font-weight:800;font-size:17px;color:var(--pink-700);}
+.input-wrap{position:relative;display:flex;align-items:center;}
+#answerInput{
+  width:150px;padding:13px 40px 13px 18px;font-size:20px;font-weight:800;
+  border:2.5px solid var(--pink-200);border-radius:14px;outline:none;
+  font-family:inherit;color:var(--pink-700);background:#fffafd;transition:.18s;
+}
+#answerInput:focus{border-color:var(--pink-500);box-shadow:0 0 0 4px rgba(236,95,146,.15);}
+.input-wrap .unit{
+  position:absolute;right:14px;font-size:20px;font-weight:800;color:var(--pink-400,#f7a8c8);
+  pointer-events:none;
+}
+.feedback{min-height:26px;font-size:16px;font-weight:700;margin-bottom:6px;}
+.feedback.ok{color:#1f9d63;}
+.feedback.bad{color:#d9455f;}
+.solution-box{
+  display:none;background:linear-gradient(160deg,#fff6fb,#ffeaf4);
+  border:2px solid var(--pink-200);border-left:6px solid var(--pink-500);
+  border-radius:16px;padding:14px 18px;font-size:15px;line-height:1.6;color:#632a48;
+  max-height:230px;overflow-y:auto;
+}
+.solution-box.show{display:block;animation:fade .3s ease;}
+.solution-box h4{margin:0 0 8px;color:var(--pink-700);font-size:15px;letter-spacing:.4px;}
+.solution-box ol{margin:0;padding-left:20px;}
+.solution-box li{margin-bottom:6px;}
+
+/* ---------- Нижняя панель ---------- */
+.navbar{
+  display:flex;justify-content:center;gap:14px;padding:14px 26px 20px;flex-shrink:0;
+  background:rgba(255,255,255,.6);border-top:2px solid #ffe0ee;
+}
+.navbar .btn{min-width:130px;}
+
+/* ---------- Модальные окна ---------- */
+.overlay{
+  position:fixed;inset:0;background:rgba(120,30,70,.35);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;
+}
+.overlay.hidden{display:none;}
+.warning-card,.confirm-card{
+  background:#fff;border-radius:26px;padding:34px 40px;max-width:480px;width:100%;
+  text-align:center;box-shadow:0 26px 60px rgba(120,30,70,.3);
+  border:3px solid var(--pink-200);animation:pop .28s ease;
+}
+.warn-icon{font-size:52px;line-height:1;margin-bottom:8px;}
+.warning-card h2{margin:0 0 12px;color:#d9455f;font-size:25px;}
+.warning-card p{margin:0 0 24px;font-size:16px;line-height:1.55;color:#6a3350;}
+.confirm-card h2{margin:0 0 8px;color:var(--pink-700);font-size:23px;line-height:1.35;}
+.confirm-card p{margin:0 0 26px;font-size:17px;color:#7d4a66;font-weight:600;}
+.confirm-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+/* ---------- Тосты ---------- */
+.toast{
+  position:fixed;left:50%;bottom:34px;transform:translate(-50%,20px);
+  background:var(--pink-700);color:#fff;padding:12px 26px;border-radius:99px;
+  font-weight:700;font-size:15px;opacity:0;pointer-events:none;transition:.25s;z-index:200;
+  box-shadow:0 10px 26px rgba(120,30,70,.35);
+}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+
+/* ---------- Экран результатов ---------- */
+#resultScreen{overflow-y:auto;padding:26px;}
+.result-card{
+  background:#fff;border-radius:30px;padding:38px 44px;max-width:760px;width:100%;
+  margin:auto;text-align:center;box-shadow:0 26px 60px rgba(224,58,118,.2);
+  border:2px solid #ffe0ee;
+}
+.result-card h1{margin:0 0 20px;color:var(--pink-700);font-size:28px;}
+.score-circle{
+  width:170px;height:170px;border-radius:50%;margin:0 auto 18px;
+  background:conic-gradient(var(--pink-500) 0deg, #ffe2ef 0deg);
+  display:flex;align-items:center;justify-content:center;position:relative;
+  transition:background .6s ease;
+}
+.score-circle::after{
+  content:'';position:absolute;inset:13px;background:#fff;border-radius:50%;
+}
+.score-circle span{position:relative;z-index:1;}
+#scoreValue{font-size:44px;font-weight:800;color:var(--pink-700);}
+.score-total{font-size:20px;color:var(--muted);font-weight:700;margin-left:2px;}
+#scoreText{font-size:18px;font-weight:700;color:#7d4a66;margin:0 0 24px;}
+.result-list{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:9px;margin-bottom:28px;text-align:left;
+}
+.res-item{
+  background:var(--pink-50);border-radius:11px;padding:9px 12px;font-size:13.5px;
+  font-weight:700;color:#6a3350;display:flex;justify-content:space-between;gap:6px;
+  border-left:4px solid var(--pink-300);
+}
+.res-item.ok{border-left-color:#3fc98a;background:#f1fdf7;}
+.res-item.no{border-left-color:#e77b93;background:#fff5f7;}
+
+/* ---------- SVG ---------- */
+.ang-label{font-size:17px;font-weight:800;fill:#b8295f;font-family:inherit;}
+.ang-label.unknown{fill:#e03a76;font-size:21px;}
+.ext-label{fill:#8b2c58;font-size:16px;}
+.vertex-label{font-size:18px;font-weight:800;fill:#4a1f33;font-family:inherit;}
+
+/* ---------- Адаптив ---------- */
+@media (max-width:900px){
+  .task-card{grid-template-columns:1fr;padding:18px;}
+  .task-body{padding:6px;}
+  .figure-wrap{min-height:200px;}
+  .navbar{gap:8px;padding:12px;}
+  .navbar .btn{min-width:0;padding:11px 14px;font-size:14px;}
+  .brand{display:none;}
+  .task-text{font-size:17px;}
+}
+@media (max-width:560px){
+  .start-card{padding:32px 24px;}
+  .start-card h1{font-size:23px;}
+  .navbar{flex-wrap:wrap;}
+  .navbar .btn{flex:1;}
+  .progress-wrap{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= СТАРТ ================= -->
+<section id="startScreen" class="screen active">
+  <div class="start-card">
+    <div class="logo">△</div>
+    <h1>Тренажёр по геометрии</h1>
+    <p class="subtitle">7 класс · Нахождение углов треугольника</p>
+    <ul class="rules">
+      <li>📐 <b>20 заданий</b> с чертежами — по одному на экран</li>
+      <li>✏️ На каждое задание даётся <b>2 попытки</b></li>
+      <li>💡 После второй попытки откроется <b>алгоритм решения</b></li>
+      <li>⚠️ Не переключайте вкладки и не выходите из тренажёра — система сделает <b>3 предупреждения</b></li>
+    </ul>
+    <button id="startBtn" class="btn btn-primary btn-lg">Начать тренажёр</button>
+  </div>
+</section>
+
+<!-- ================= ТРЕНАЖЁР ================= -->
+<section id="trainerScreen" class="screen">
+  <header class="topbar">
+    <div class="brand">△ Углы треугольника</div>
+    <div class="progress-wrap">
+      <div class="progress-text">Задание <span id="curNum">1</span> из <span id="totalNum">20</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <button id="finishBtn" class="btn btn-outline">Завершить</button>
+  </header>
+
+  <main class="task-area">
+    <div class="task-card">
+      <div class="figure-wrap" id="figureWrap"></div>
+      <div class="task-body">
+        <div class="task-title">Задание <span id="taskIndex">1</span></div>
+        <p class="task-text" id="taskText"></p>
+        <div class="answer-row">
+          <label for="answerInput">Ответ:</label>
+          <div class="input-wrap">
+            <input id="answerInput" type="text" inputmode="decimal" autocomplete="off" placeholder="?">
+            <span class="unit">°</span>
+          </div>
+        </div>
+        <div id="feedback" class="feedback"></div>
+        <div id="solutionBox" class="solution-box"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="navbar">
+    <button id="prevBtn" class="btn btn-ghost">← Назад</button>
+    <button id="saveBtn" class="btn btn-outline">Сохранить</button>
+    <button id="checkBtn" class="btn btn-primary">Проверить</button>
+    <button id="nextBtn" class="btn btn-primary">Далее →</button>
+  </footer>
+</section>
+
+<!-- ================= РЕЗУЛЬТАТ ================= -->
+<section id="resultScreen" class="screen">
+  <div class="result-card">
+    <h1>Тестирование завершено</h1>
+    <div class="score-circle" id="scoreCircle"><span id="scoreValue">0</span><span class="score-total">/20</span></div>
+    <p id="scoreText"></p>
+    <div class="result-list" id="resultList"></div>
+    <button id="restartBtn" class="btn btn-primary btn-lg">Пройти заново</button>
+  </div>
+</section>
+
+<!-- ================= ПРЕДУПРЕЖДЕНИЕ ================= -->
+<div id="warningOverlay" class="overlay hidden">
+  <div class="warning-card">
+    <div class="warn-icon">⚠️</div>
+    <h2>Предупреждение!</h2>
+    <p id="warningText"></p>
+    <button id="warnOk" class="btn btn-primary">Продолжить работу</button>
+  </div>
+</div>
+
+<!-- ================= ПОДТВЕРЖДЕНИЕ ЗАВЕРШЕНИЯ ================= -->
+<div id="confirmOverlay" class="overlay hidden">
+  <div class="confirm-card">
+    <h2>Всё проверили?<br>Готовы завершить тестирование?</h2>
+    <p>После завершения вы увидите свой результат.</p>
+    <div class="confirm-actions">
+      <button id="confirmNo" class="btn btn-ghost">Нет, вернуться</button>
+      <button id="confirmYes" class="btn btn-primary">Да, завершить</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* =========================================================
+   ГЕОМЕТРИЧЕСКИЕ ХЕЛПЕРЫ
+   ========================================================= */
+function arcPath(V, P1, P2, r){
+  const a1 = Math.atan2(P1[1]-V[1], P1[0]-V[0]);
+  const a2 = Math.atan2(P2[1]-V[1], P2[0]-V[0]);
+  let d = a2 - a1;
+  while (d >  Math.PI) d -= 2*Math.PI;
+  while (d < -Math.PI) d += 2*Math.PI;
+  const sweep = d > 0 ? 1 : 0;
+  const x1 = V[0] + r*Math.cos(a1), y1 = V[1] + r*Math.sin(a1);
+  const x2 = V[0] + r*Math.cos(a2), y2 = V[1] + r*Math.sin(a2);
+  return `M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r} ${r} 0 0 ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+}
+
+/* =========================================================
+   20 ЗАДАНИЙ
+   ========================================================= */
+const TASKS = [
+
+/* 1 */
+{
+  text:"Найдите угол C треугольника ABC, если ∠A = 60°, ∠B = 70°.",
+  pts:{A:[110,250], B:[280,250], C:[214,69]},
+  labels:{A:"60°", B:"70°", C:{t:"?", unknown:true}},
+  answer:50,
+  solution:[
+    "Сумма углов любого треугольника равна 180°.",
+    "Значит, ∠C = 180° − ∠A − ∠B.",
+    "∠C = 180° − 60° − 70° = 50°."
+  ]
+},
+
+/* 2 */
+{
+  text:"Треугольник ABC прямоугольный, ∠C = 90°. Найдите угол B, если ∠A = 35°.",
+  pts:{A:[100,70], B:[228,250], C:[100,250]},
+  labels:{A:"35°", B:{t:"?", unknown:true}, C:"90°"},
+  answer:55,
+  solution:[
+    "Сумма углов треугольника равна 180°.",
+    "∠B = 180° − ∠A − ∠C = 180° − 35° − 90°.",
+    "∠B = 55°."
+  ]
+},
+
+/* 3 */
+{
+  text:"Треугольник ABC равнобедренный (AC = BC). Угол при вершине C равен 40°. Найдите угол A.",
+  pts:{A:[135,250], B:[265,250], C:[200,71]},
+  labels:{A:{t:"?", unknown:true}, B:{t:"?", unknown:true}, C:"40°"},
+  answer:70,
+  solution:[
+    "В равнобедренном треугольнике углы при основании равны: ∠A = ∠B.",
+    "Сумма углов: ∠A + ∠B + ∠C = 180°.",
+    "2∠A = 180° − 40° = 140°, значит ∠A = 70°."
+  ]
+},
+
+/* 4 */
+{
+  text:"Треугольник ABC равнобедренный (AC = BC), ∠A = ∠B = 65°. Найдите угол C.",
+  pts:{A:[110,250], B:[290,250], C:[200,57]},
+  labels:{A:"65°", B:"65°", C:{t:"?", unknown:true}},
+  answer:50,
+  solution:[
+    "Сумма углов треугольника равна 180°.",
+    "∠C = 180° − ∠A − ∠B.",
+    "∠C = 180° − 65° − 65° = 50°."
+  ]
+},
+
+/* 5 */
+{
+  text:"Треугольник ABC равносторонний. Найдите его угол.",
+  pts:{A:[120,250], B:[280,250], C:[200,111]},
+  labels:{A:{t:"?", unknown:true}, B:{t:"?", unknown:true}, C:{t:"?", unknown:true}},
+  answer:60,
+  solution:[
+    "В равностороннем треугольнике все углы равны.",
+    "Обозначим угол через x: 3x = 180°.",
+    "x = 60°. Каждый угол равностороннего треугольника равен 60°."
+  ]
+},
+
+/* 6 */
+{
+  text:"Внешний угол при вершине B равен 110°, ∠A = 45°. Найдите угол C.",
+  pts:{A:[70,250], B:[290,250], C:[231,89]},
+  labels:{A:"45°", C:{t:"?", unknown:true}},
+  extra:(()=>{
+    const B=[290,250], C=[231,89], D=[390,250];
+    return `<line x1="${B[0]}" y1="${B[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#e8578f" stroke-width="3" stroke-dasharray="9 6"/>`
+      + `<path d="${arcPath(B,C,D,30)}" fill="none" stroke="#c93a75" stroke-width="2.5"/>`
+      + `<text x="322" y="205" class="ang-label ext-label" text-anchor="middle">110°</text>`;
+  })(),
+  answer:65,
+  solution:[
+    "Внешний и внутренний углы при вершине B — смежные: ∠B = 180° − 110° = 70°.",
+    "По свойству внешнего угла: внешний угол равен сумме двух углов, не смежных с ним.",
+    "110° = ∠A + ∠C → ∠C = 110° − 45° = 65°."
+  ]
+},
+
+/* 7 */
+{
+  text:"Углы треугольника относятся как 2 : 3 : 4. Найдите больший угол.",
+  pts:{A:[90,250], B:[310,250], C:[238,126]},
+  labels:{A:"2x", B:"3x", C:"4x"},
+  answer:80,
+  solution:[
+    "Обозначим одну часть через x. Тогда углы равны 2x, 3x и 4x.",
+    "2x + 3x + 4x = 180° → 9x = 180° → x = 20°.",
+    "Больший угол: 4x = 4 · 20° = 80°."
+  ]
+},
+
+/* 8 */
+{
+  text:"Угол A на 20° больше угла B, а ∠C = 60°. Найдите угол A.",
+  pts:{A:[90,250], B:[310,250], C:[157,67]},
+  labels:{A:{t:"?", unknown:true}, B:{t:"?", unknown:true}, C:"60°"},
+  answer:70,
+  solution:[
+    "Пусть ∠B = x, тогда ∠A = x + 20°.",
+    "x + (x + 20°) + 60° = 180° → 2x = 100° → x = 50°.",
+    "∠A = 50° + 20° = 70°."
+  ]
+},
+
+/* 9 */
+{
+  text:"∠A = 40°, ∠B = 60°. Из вершины C проведена биссектриса CD. Найдите угол ACD.",
+  pts:{A:[90,250], B:[310,250], C:[238,126]},
+  labels:{A:"40°", B:"60°"},
+  skipArc:["C"],
+  extra:(()=>{
+    const C=[238,126], D=[216,250];
+    return `<line x1="${C[0]}" y1="${C[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#e8578f" stroke-width="2.5"/>`
+      + `<text x="${D[0]}" y="${D[1]+24}" class="vertex-label" text-anchor="middle">D</text>`
+      + `<text x="216" y="166" class="ang-label unknown" text-anchor="middle">?</text>`;
+  })(),
+  answer:40,
+  solution:[
+    "Сначала найдём угол C: ∠C = 180° − 40° − 60° = 80°.",
+    "Биссектриса CD делит угол C пополам.",
+    "∠ACD = ∠C : 2 = 80° : 2 = 40°."
+  ]
+},
+
+/* 10 */
+{
+  text:"Внешний угол при вершине A равен 130°, ∠B = 40°. Найдите угол C.",
+  pts:{A:[110,250], B:[350,250], C:[209,132]},
+  labels:{B:"40°", C:{t:"?", unknown:true}},
+  extra:(()=>{
+    const A=[110,250], C=[209,132], D=[10,250];
+    return `<line x1="${A[0]}" y1="${A[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#e8578f" stroke-width="3" stroke-dasharray="9 6"/>`
+      + `<path d="${arcPath(A,C,D,30)}" fill="none" stroke="#c93a75" stroke-width="2.5"/>`
+      + `<text x="72" y="200" class="ang-label ext-label" text-anchor="middle">130°</text>`;
+  })(),
+  answer:90,
+  solution:[
+    "Внешний и внутренний углы при вершине A — смежные: ∠A = 180° − 130° = 50°.",
+    "Сумма углов треугольника: ∠C = 180° − ∠A − ∠B.",
+    "∠C = 180° − 50° − 40° = 90°."
+  ]
+},
+
+/* 11 */
+{
+  text:"∠A = ∠B, а ∠C на 30° больше ∠A. Найдите угол C.",
+  pts:{A:[100,250], B:[300,250], C:[200,131]},
+  labels:{A:"x", B:"x", C:"x+30°"},
+  answer:80,
+  solution:[
+    "Пусть ∠A = ∠B = x. Тогда ∠C = x + 30°.",
+    "x + x + (x + 30°) = 180° → 3x = 150° → x = 50°.",
+    "∠C = 50° + 30° = 80°."
+  ]
+},
+
+/* 12 */
+{
+  text:"В равнобедренном треугольнике угол при основании в 2 раза больше угла при вершине. Найдите угол при основании.",
+  pts:{A:[145,250], B:[255,250], C:[200,81]},
+  labels:{A:"2x", B:"2x", C:"x"},
+  answer:72,
+  solution:[
+    "Пусть угол при вершине равен x, тогда каждый угол при основании равен 2x.",
+    "x + 2x + 2x = 180° → 5x = 180° → x = 36°.",
+    "Угол при основании: 2x = 2 · 36° = 72°."
+  ]
+},
+
+/* 13 */
+{
+  text:"∠C = 90°, ∠A − ∠B = 20°. Найдите угол A.",
+  pts:{A:[110,110], B:[310,250], C:[110,250]},
+  labels:{A:{t:"?", unknown:true}, B:{t:"?", unknown:true}, C:"90°"},
+  answer:55,
+  solution:[
+    "∠A + ∠B = 180° − 90° = 90°.",
+    "Так как ∠A − ∠B = 20°, то ∠A = ∠B + 20°.",
+    "2∠B + 20° = 90° → ∠B = 35°, значит ∠A = 35° + 20° = 55°."
+  ]
+},
+
+/* 14 */
+{
+  text:"∠A в 2 раза больше ∠B, а ∠C = 60°. Найдите угол B.",
+  pts:{A:[90,250], B:[330,250], C:[121,75]},
+  labels:{A:"2x", B:"x", C:"60°"},
+  answer:40,
+  solution:[
+    "Пусть ∠B = x, тогда ∠A = 2x.",
+    "2x + x + 60° = 180° → 3x = 120° → x = 40°.",
+    "∠B = 40°."
+  ]
+},
+
+/* 15 */
+{
+  text:"CH — высота треугольника ABC. ∠A = 55°, ∠B = 45°. Найдите угол ACH.",
+  pts:{A:[90,250], B:[330,250], C:[189,109]},
+  labels:{A:"55°", B:"45°"},
+  skipArc:["C"],
+  extra:(()=>{
+    const C=[189,109], H=[189,250];
+    return `<line x1="${C[0]}" y1="${C[1]}" x2="${H[0]}" y2="${H[1]}" stroke="#e8578f" stroke-width="2.5" stroke-dasharray="8 5"/>`
+      + `<rect x="189" y="228" width="20" height="20" fill="none" stroke="#e8578f" stroke-width="2"/>`
+      + `<text x="189" y="276" class="vertex-label" text-anchor="middle">H</text>`
+      + `<text x="176" y="150" class="ang-label unknown" text-anchor="middle">?</text>`;
+  })(),
+  answer:35,
+  solution:[
+    "CH ⟂ AB, значит треугольник ACH — прямоугольный (∠AHC = 90°).",
+    "Сумма острых углов прямоугольного треугольника равна 90°.",
+    "∠ACH = 90° − ∠A = 90° − 55° = 35°."
+  ]
+},
+
+/* 16 */
+{
+  text:"Внешние углы при вершинах A и B равны 100° и 130°. Найдите угол C.",
+  pts:{A:[110,250], B:[310,250], C:[145,53]},
+  labels:{C:{t:"?", unknown:true}},
+  extra:(()=>{
+    const A=[110,250], B=[310,250], C=[145,53], D=[30,250], E=[390,250];
+    return `<line x1="${A[0]}" y1="${A[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#e8578f" stroke-width="3" stroke-dasharray="9 6"/>`
+      + `<line x1="${B[0]}" y1="${B[1]}" x2="${E[0]}" y2="${E[1]}" stroke="#e8578f" stroke-width="3" stroke-dasharray="9 6"/>`
+      + `<path d="${arcPath(A,C,D,30)}" fill="none" stroke="#c93a75" stroke-width="2.5"/>`
+      + `<path d="${arcPath(B,C,E,30)}" fill="none" stroke="#c93a75" stroke-width="2.5"/>`
+      + `<text x="74" y="208" class="ang-label ext-label" text-anchor="middle">100°</text>`
+      + `<text x="334" y="200" class="ang-label ext-label" text-anchor="middle">130°</text>`;
+  })(),
+  answer:50,
+  solution:[
+    "Внутренние углы: ∠A = 180° − 100° = 80°, ∠B = 180° − 130° = 50°.",
+    "Сумма углов треугольника: ∠C = 180° − ∠A − ∠B.",
+    "∠C = 180° − 80° − 50° = 50°."
+  ]
+},
+
+/* 17 */
+{
+  text:"Углы треугольника относятся как 1 : 2 : 3. Найдите больший угол.",
+  pts:{A:[120,80], B:[218,250], C:[120,250]},
+  labels:{A:"x", B:"2x", C:"3x"},
+  answer:90,
+  solution:[
+    "Обозначим одну часть через x. Тогда углы равны x, 2x и 3x.",
+    "x + 2x + 3x = 180° → 6x = 180° → x = 30°.",
+    "Больший угол: 3x = 3 · 30° = 90°."
+  ]
+},
+
+/* 18 */
+{
+  text:"Два угла треугольника относятся как 2 : 3, а третий угол равен 80°. Найдите больший из двух неизвестных углов.",
+  pts:{A:[80,250], B:[320,250], C:[111,75]},
+  labels:{A:"80°", B:"2x", C:"3x"},
+  answer:60,
+  solution:[
+    "Сумма двух неизвестных углов: 180° − 80° = 100°.",
+    "2x + 3x = 100° → 5x = 100° → x = 20°.",
+    "Углы равны 40° и 60°. Больший из них — 60°."
+  ]
+},
+
+/* 19 */
+{
+  text:"В равнобедренном треугольнике угол при вершине равен 100°. Найдите угол при основании.",
+  pts:{A:[110,250], B:[290,250], C:[200,174]},
+  labels:{A:{t:"?", unknown:true}, B:{t:"?", unknown:true}, C:"100°"},
+  answer:40,
+  solution:[
+    "В равнобедренном треугольнике углы при основании равны.",
+    "Обозначим угол при основании через x: 2x + 100° = 180°.",
+    "2x = 80°, значит x = 40°."
+  ]
+},
+
+/* 20 */
+{
+  text:"Биссектрисы углов A и B пересекаются в точке O. ∠A = 70°, ∠B = 60°. Найдите угол AOB.",
+  pts:{A:[115,250], B:[285,250], C:[181,69]},
+  labels:{A:"70°", B:"60°"},
+  extra:(()=>{
+    const O=[192,196];
+    return `<line x1="115" y1="250" x2="${O[0]}" y2="${O[1]}" stroke="#e8578f" stroke-width="2.5"/>`
+      + `<line x1="285" y1="250" x2="${O[0]}" y2="${O[1]}" stroke="#e8578f" stroke-width="2.5"/>`
+      + `<circle cx="${O[0]}" cy="${O[1]}" r="4.5" fill="#e03a76"/>`
+      + `<text x="210" y="184" class="vertex-label">O</text>`
+      + `<path d="${arcPath(O,[115,250],[285,250],22)}" fill="none" stroke="#c93a75" stroke-width="2.5"/>`
+      + `<text x="194" y="236" class="ang-label unknown" text-anchor="middle">?</text>`;
+  })(),
+  answer:115,
+  solution:[
+    "Сначала найдём угол C: ∠C = 180° − 70° − 60° = 50°.",
+    "Биссектрисы делят углы пополам: ∠OAB = 35°, ∠OBA = 30°.",
+    "В треугольнике AOB: ∠AOB = 180° − 35° − 30° = 115°."
+  ]
+}
+
+];
+
+/* =========================================================
+   ПОСТРОЕНИЕ ЧЕРТЕЖА
+   ========================================================= */
+function buildSVG(t){
+  const P = t.pts;
+  const G = [(P.A[0]+P.B[0]+P.C[0])/3, (P.A[1]+P.B[1]+P.C[1])/3];
+  const skip = t.skipArc || [];
+  const pairs = {A:[P.B,P.C], B:[P.A,P.C], C:[P.A,P.B]};
+
+  let s = `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet" class="figure" xmlns="http://www.w3.org/2000/svg">`;
+  s += `<polygon points="${P.A[0]},${P.A[1]} ${P.B[0]},${P.B[1]} ${P.C[0]},${P.C[1]}" fill="#fff2f8" stroke="#e8578f" stroke-width="3" stroke-linejoin="round"/>`;
+
+  if (t.extra) s += t.extra;
+
+  ['A','B','C'].forEach(k=>{
+    if (skip.includes(k)) return;
+    s += `<path d="${arcPath(P[k], pairs[k][0], pairs[k][1], 24)}" fill="none" stroke="#f7a8c8" stroke-width="2.5"/>`;
+  });
+
+  ['A','B','C'].forEach(k=>{
+    const lab = t.labels ? t.labels[k] : null;
+    if (!lab) return;
+    const o = (typeof lab === 'string') ? {t:lab} : lab;
+    const V = P[k];
+    let pos = o.pos;
+    if (!pos){
+      const dx = G[0]-V[0], dy = G[1]-V[1];
+      const len = Math.hypot(dx,dy) || 1;
+      const r = Math.max(38, Math.min(50, len*0.45));
+      pos = [V[0] + dx/len*r, V[1] + dy/len*r];
+    }
+    const cls = o.unknown ? 'ang-label unknown' : 'ang-label';
+    s += `<text x="${pos[0].toFixed(1)}" y="${pos[1].toFixed(1)}" class="${cls}" text-anchor="middle" dominant-baseline="middle">${o.t}</text>`;
+  });
+
+  ['A','B','C'].forEach(k=>{
+    const V = P[k];
+    const dx = V[0]-G[0], dy = V[1]-G[1];
+    const len = Math.hypot(dx,dy) || 1;
+    const pos = [V[0]+dx/len*27, V[1]+dy/len*27];
+    s += `<text x="${pos[0].toFixed(1)}" y="${pos[1].toFixed(1)}" class="vertex-label" text-anchor="middle" dominant-baseline="middle">${k}</text>`;
+  });
+
+  s += `</svg>`;
+  return s;
+}
+
+/* =========================================================
+   СОСТОЯНИЕ
+   ========================================================= */
+const state = {
+  started:false,
+  finished:false,
+  index:0,
+  warnings:0,
+  warningOpen:false,
+  data:[]
+};
+
+const $ = id => document.getElementById(id);
+
+function resetData(){
+  state.data = TASKS.map(()=>({ value:'', attempts:0, correct:false, revealed:false, msg:'', msgType:'' }));
+  state.index = 0;
+  state.warnings = 0;
+  state.finished = false;
+  state.warningOpen = false;
+}
+
+/* =========================================================
+   НАВИГАЦИЯ ЭКРАНОВ
+   ========================================================= */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+/* =========================================================
+   СТАРТ
+   ========================================================= */
+$('startBtn').addEventListener('click', ()=>{
+  resetData();
+  state.started = true;
+  $('totalNum').textContent = TASKS.length;
+  showScreen('trainerScreen');
+  render();
+});
+
+/* =========================================================
+   ОТРИСОВКА ЗАДАНИЯ
+   ========================================================= */
+function render(){
+  const t = TASKS[state.index];
+  const d = state.data[state.index];
+
+  $('taskIndex').textContent = state.index + 1;
+  $('curNum').textContent = state.index + 1;
+  $('progressFill').style.width = ((state.index + 1) / TASKS.length * 100) + '%';
+
+  $('figureWrap').innerHTML = buildSVG(t);
+  $('taskText').textContent = t.text;
+
+  const inp = $('answerInput');
+  inp.value = d.value;
+
+  const fb = $('feedback');
+  fb.textContent = d.msg;
+  fb.className = 'feedback' + (d.msgType ? ' ' + d.msgType : '');
+
+  const sb = $('solutionBox');
+  if (d.revealed){
+    sb.classList.add('show');
+    sb.innerHTML = `<h4>💡 Алгоритм решения</h4><ol>${t.solution.map(x=>`<li>${x}</li>`).join('')}</ol>`;
+  } else {
+    sb.classList.remove('show');
+    sb.innerHTML = '';
+  }
+
+  $('prevBtn').disabled = state.index === 0;
+  $('nextBtn').textContent = (state.index === TASKS.length - 1) ? 'Завершить ✓' : 'Далее →';
+}
+
+/* =========================================================
+   СОХРАНЕНИЕ ТЕКУЩЕГО ОТВЕТА
+   ========================================================= */
+function saveCurrent(){
+  const inp = $('answerInput');
+  if (inp) state.data[state.index].value = inp.value;
+}
+
+/* =========================================================
+   ПРОВЕРКА ОТВЕТА
+   ========================================================= */
+function checkAnswer(){
+  const t = TASKS[state.index];
+  const d = state.data[state.index];
+  const inp = $('answerInput');
+  const raw = inp.value.trim().replace(',', '.');
+
+  d.value = inp.value;
+
+  if (raw === ''){
+    toast('Введите ответ');
+    inp.focus();
+    return;
+  }
+  const num = parseFloat(raw);
+  if (isNaN(num)){
+    toast('Введите число');
+    inp.focus();
+    return;
+  }
+
+  d.attempts++;
+
+  if (Math.abs(num - t.answer) < 0.5){
+    d.correct = true;
+    d.msg = `✅ Верно! Ответ: ${t.answer}°`;
+    d.msgType = 'ok';
+    d.revealed = false;
+  } else if (d.attempts >= 2){
+    d.correct = false;
+    d.revealed = true;
+    d.msg = `❌ Неверно. Правильный ответ: ${t.answer}°. Ниже — алгоритм решения.`;
+    d.msgType = 'bad';
+  } else {
+    d.correct = false;
+    d.msg = '❌ Неверно. Осталась ещё одна попытка.';
+    d.msgType = 'bad';
+  }
+
+  render();
+}
+
+/* =========================================================
+   КНОПКИ
+   ========================================================= */
+$('checkBtn').addEventListener('click', checkAnswer);
+
+$('answerInput').addEventListener('keydown', e=>{
+  if (e.key === 'Enter') checkAnswer();
+});
+$('answerInput').addEventListener('input', ()=>{
+  state.data[state.index].value = $('answerInput').value;
+});
+
+$('saveBtn').addEventListener('click', ()=>{
+  saveCurrent();
+  toast('💾 Ответ сохранён');
+});
+
+$('prevBtn').addEventListener('click', ()=>{
+  if (state.index === 0) return;
+  saveCurrent();
+  state.index--;
+  render();
+});
+
+$('nextBtn').addEventListener('click', ()=>{
+  saveCurrent();
+  if (state.index === TASKS.length - 1){
+    openConfirm();
+  } else {
+    state.index++;
+    render();
+  }
+});
+
+$('finishBtn').addEventListener('click', openConfirm);
+
+/* =========================================================
+   ОКНО ПОДТВЕРЖДЕНИЯ ЗАВЕРШЕНИЯ
+   ========================================================= */
+function openConfirm(){
+  if (state.finished) return;
+  $('confirmOverlay').classList.remove('hidden');
+}
+$('confirmNo').addEventListener('click', ()=>{
+  $('confirmOverlay').classList.add('hidden');
+});
+$('confirmYes').addEventListener('click', ()=>{
+  $('confirmOverlay').classList.add('hidden');
+  finishTest();
+});
+
+/* =========================================================
+   ЗАВЕРШЕНИЕ ТЕСТА
+   ========================================================= */
+function finishTest(){
+  state.finished = true;
+  state.started = false;
+
+  const total = TASKS.length;
+  const correct = state.data.filter(d=>d.correct).length;
+  const percent = Math.round(correct / total * 100);
+
+  $('scoreValue').textContent = correct;
+  $('scoreCircle').querySelector('.score-total').textContent = '/' + total;
+  $('scoreCircle').style.background =
+    `conic-gradient(#ec5f92 ${percent*3.6}deg, #ffe2ef ${percent*3.6}deg)`;
+
+  let verdict;
+  if (percent >= 90) verdict = 'Превосходный результат! Ты отлично знаешь углы треугольника. 🏆';
+  else if (percent >= 70) verdict = 'Хороший результат! Осталось немного подтянуть. 👍';
+  else if (percent >= 50) verdict = 'Неплохо, но стоит повторить свойства углов треугольника. 📘';
+  else verdict = 'Нужно повторить тему «Углы треугольника». Попробуй ещё раз! 💪';
+
+  $('scoreText').textContent = `Правильно решено ${correct} из ${total} (${percent}%). ${verdict}`;
+
+  $('resultList').innerHTML = state.data.map((d, i)=>{
+    const mark = d.correct ? '✓' : '✗';
+    return `<div class="res-item ${d.correct ? 'ok' : 'no'}">
+              <span>№ ${i+1}</span><span>${mark}</span>
+            </div>`;
+  }).join('');
+
+  showScreen('resultScreen');
+}
+
+$('restartBtn').addEventListener('click', ()=>{
+  resetData();
+  showScreen('startScreen');
+});
+
+/* =========================================================
+   ПРЕДУПРЕЖДЕНИЯ (3 раза)
+   ========================================================= */
+function triggerWarning(reason){
+  if (!state.started || state.finished) return;
+  if (state.warningOpen) return;
+  if (!$('confirmOverlay').classList.contains('hidden')) return;
+
+  state.warnings++;
+  state.warningOpen = true;
+
+  const el = $('warningText');
+  if (state.warnings <= 3){
+    el.innerHTML = `<b>Предупреждение ${state.warnings} из 3.</b><br><br>
+      Зафиксировано нарушение: <i>${reason}</i>.<br><br>
+      Так делать нельзя — при следующем нарушении тестирование может быть прервано.`;
+  } else {
+    el.innerHTML = `<b>Вы нарушили правила более 3 раз.</b><br><br>
+      Это последнее предупреждение. Пожалуйста, завершите работу над заданиями, не покидая тренажёр.`;
+  }
+
+  $('warningOverlay').classList.remove('hidden');
+}
+
+$('warnOk').addEventListener('click', ()=>{
+  $('warningOverlay').classList.add('hidden');
+  state.warningOpen = false;
+  window.focus();
+});
+
+document.addEventListener('visibilitychange', ()=>{
+  if (document.hidden){
+    triggerWarning('открыта другая вкладка или окно');
+  }
+});
+
+window.addEventListener('blur', ()=>{
+  triggerWarning('вы вышли из окна тренажёра');
+});
+
+/* =========================================================
+   ТОСТ
+   ========================================================= */
+let toastTimer = null;
+function toast(msg){
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 1800);
+}
+</script>
+</body>
+</html>
